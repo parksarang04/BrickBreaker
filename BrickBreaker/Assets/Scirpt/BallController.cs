@@ -10,6 +10,7 @@ public class BallController : MonoBehaviour
     private bool isMoving = false;
     private Rigidbody2D rb;
     private Transform paddleTransform;
+    private Collider2D ballCollider;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,14 @@ public class BallController : MonoBehaviour
         paddleTransform = GameObject.Find("Paddle").transform;
         //공과 패들 사이의 거리 계산
         offset = transform.position - paddleTransform.position;
+
+        // Collider 컴포넌트 가져오기
+        ballCollider = GetComponent<Collider2D>();
+        // 시작 시 Collider 비활성화
+        if(ballCollider != null)
+        {
+            ballCollider.enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -34,6 +43,12 @@ public class BallController : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 isMoving = true;
+
+                //발사 직전에 Collider 활성화
+                if (ballCollider != null)
+                {
+                    ballCollider.enabled = true;
+                }
                 //공의 약간 힘을 줘서 대각선으로 발사
                 rb.AddForce(new Vector2(1f, 2f).normalized * ballspeed,ForceMode2D.Impulse);
             }

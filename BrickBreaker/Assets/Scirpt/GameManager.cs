@@ -36,7 +36,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameObject paddleObject = GameObject.FindGameObjectWithTag("Paddle"); // 씬 전체를 검색해서 "Paddle" 태그가 붙어있는 게임 오브젝트를 찾고 그 결과를 paddleObject 변수에 저장
+        if(paddleObject != null) //paddleObject를 성공적으로 찾았다면
+        {
+            paddleTransform = paddleObject.transform;   // 찾은 패들 오브젝트의 Transform 컴포넌트를 paddkeTeansform 변수에 저장
+
+            SpawnBall(); //게임 시작 시 공 생성
+        }
     }
 
     // Update is called once per frame
@@ -78,6 +84,12 @@ public class GameManager : MonoBehaviour
             currenBall = Instantiate(ballPrebab, spawnPosition, Quaternion.identity);
 
             //공 컨트롤러에 "아직 발사되지 않음" 상태를 알려줌
+            BallController ballController = currenBall.GetComponent<BallController>();
+            if(ballController != null)
+            {
+                //이 함수를 BallController에 추가하고 호출하면, IsMoving 및 Collider 상태를 비활성화를 한 번에 처리가능
+                //ballController.ResetBallState();
+            }
 
         }
     }
