@@ -10,7 +10,11 @@ public class GameManager : MonoBehaviour
 
     //게임 상태 변수(Inspector)에서 조절 가능
     public float currentScore;
-    public int   currenlives;
+    public int currentlives;
+    public int currentLevel;
+    public int totalBricks;       //현재 레벨의 전체 벽돌 수
+    public float ballSpeed = 8f;  // 
+    public int currentBricks = 1; //레벨 변수
 
     //public bool isGameOver;
     //공 리셋을 위한 변수(Inspector)에서 조절 가능
@@ -18,7 +22,7 @@ public class GameManager : MonoBehaviour
     private Transform paddleTransform;
 
     //활성화된 공 오브젝트
-    private GameObject currenBall;
+    private GameObject currentBall;
 
     // start 보다 먼저 실행되어 instance 변수에 자기 자신을 할당
     void Awake()
@@ -61,10 +65,10 @@ public class GameManager : MonoBehaviour
     //생명 감소 함수
     public void LoseLife()
     {
-        currenlives--;
-        Debug.Log("Life" + currenlives);
+        currentlives--;
+        Debug.Log("Life" + currentlives);
 
-        if(currenlives > 0)
+        if(currentlives > 0)
         {
             //생명이 남았을 때 공 리셋
             Invoke("SpawnBall", 1f);  //1초 후에 SpawnBall 함수 실행
@@ -81,10 +85,10 @@ public class GameManager : MonoBehaviour
         {
             // 공을 패들 위치에 위치 (offset은 ballControll에서 처리
             Vector3 spawnPosition = paddleTransform.position + new Vector3(0, 0.5f, 0);
-            currenBall = Instantiate(ballPrebab, spawnPosition, Quaternion.identity);
+            currentBall = Instantiate(ballPrebab, spawnPosition, Quaternion.identity);
 
             //공 컨트롤러에 "아직 발사되지 않음" 상태를 알려줌
-            BallController ballController = currenBall.GetComponent<BallController>();
+            BallController ballController = currentBall.GetComponent<BallController>();
             if(ballController != null)
             {
                 //이 함수를 BallController에 추가하고 호출하면, IsMoving 및 Collider 상태를 비활성화를 한 번에 처리가능
@@ -92,6 +96,28 @@ public class GameManager : MonoBehaviour
             }
 
         }
+    }
+
+    public void LevelUp()
+    {
+        Debug.Log("Level Clear! Moving to next level...");
+
+        currentLevel++;     //레벨 증가
+
+        //공 속도 증가 로직
+        ballSpeed *= 1.1f; //공 속도를 10% 증가
+
+        //다음 레벨의 벽돌을 생성하는 로직 호환
+        LevelGenerator.Instance.GenerateNextLevel(currentLevel);
+    
+        //현재 공이 있다면 파괴하고 새 공을 생성
+        if (currentBall != null)
+        {
+            Destroy(currentBall);
+        }
+
+        //1초후 새 공을 생성
+        Invoke("SpqwnBall", 1f);
     }
 
     //게임 오버 처리 함수

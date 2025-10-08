@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    public static LevelGenerator Instance;
+
     public GameObject brickPrefab;
 
     // Inspector에서 조절할 수 있는 배열 크기
@@ -16,19 +18,50 @@ public class LevelGenerator : MonoBehaviour
 
     private BoxCollider2D areaCollider;
 
-    void Start()
+    void Awake()
     {
-        areaCollider = GetComponent<BoxCollider2D>();
-
-        if (areaCollider == null)
+        if (Instance == null)
         {
-            Debug.LogError("LevelGenerator에 BoxCollider2D 컴포넌트가 필요합니다. 배열이 생성되지 않습니다.");
-            return; // 컴포넌트가 없으면 여기서 실행 중단
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
         }
 
-        // GenerateBricks() 함수 호출을 한 번만 실행
+        // BoxCollider2D 컴포넌트 가져오기
+        areaCollider = GetComponent<BoxCollider2D>();
+    }
+
+    void Start()
+    {
+        // Level 1의 벽돌 생성
         GenerateBricks();
-        Debug.Log("Level Generator Started Rows : " + rows);
+    }
+
+    // LevelGenerator가 활성화될 때 실행
+    public void GenerateNextLevel(int level)
+    {
+        // 기존 맵의 벽돌 모두 파괴
+        DestroyExistingBricks();
+
+        // 난이도에 따라 배열 크기 또는 생성 패턴 변겅
+        rows = 5 + (level - 1); //레벨이 올라갈수록 행이 하나씩 추가
+
+        // 새로운 벽돌 생성 로직 호출
+        GenerateBricks();
+    }
+
+    // 기존 맵의 벽돌 모두 파괴
+    private void DestroyExistingBricks()
+    {
+        // 씬에 있는 모든 "Brick" 태그 오브젝트를 찾는다
+        GameObject[] oldBricks = GameObject.FindGameObjectsWithTag("Brick");
+
+        foreach (GameObject brick in oldBricks)
+        {
+            Destroy(brick);
+        }
     }
 
     void GenerateBricks()
@@ -53,6 +86,7 @@ public class LevelGenerator : MonoBehaviour
 
 
         // 1. 이중 반복문 사용 : 행과 열을 모두 순회
+        int count = 0;
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < cols; j++)
@@ -67,8 +101,10 @@ public class LevelGenerator : MonoBehaviour
                 position.y -= i * spacingY;
 
                 // 벽돌 생성 (Instantiate)
-                Instantiate(brickPrefab, position, Quaternion.identity);               
+                Instantiate(brickPrefab, position, Quaternion.identity);
+                count++;
             }
         }
+        GameManager.Instance.totalBricks = count;
     }
 }

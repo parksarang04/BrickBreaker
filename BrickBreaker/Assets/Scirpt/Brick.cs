@@ -17,6 +17,13 @@ public class Brick : MonoBehaviour
             GameManager.Instance.AddScore(score);
         }
 
+        GameManager.Instance.totalBricks--;
+
+        if (GameManager.Instance.totalBricks <= 0)  //카운터가 0 이하일 때
+        {
+            GameManager.Instance.LevelUp();  //레벨 업 함수 호출
+        }
+
         //충돌한 상대방의 태그 확인
         if (collision.gameObject.CompareTag("Ball"))
         {

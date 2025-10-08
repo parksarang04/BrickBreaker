@@ -548,8 +548,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brickPrefab: {fileID: 8040944031253125641, guid: 6a7c281cc3dc2f049a96441d639d4c6c, type: 3}
-  rows: 3
-  cols: 14
+  rows: 1
+  cols: 1
   spacingX: 1.2
   spacingY: 1.2
 --- !u!4 &786698552
@@ -561,7 +561,7 @@ Transform:
   m_GameObject: {fileID: 786698550}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.5, y: 3.5, z: 0}
+  m_LocalPosition: {x: 0.23, y: 3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -937,7 +937,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentScore: 0
-  currenlives: 0
+  currentlives: 0
+  currentLevel: 0
+  totalBricks: 0
+  ballSpeed: 8
+  currentBricks: 1
   ballPrebab: {fileID: 5395394096976495056, guid: c356a4208e64c7e4e81107e3c8a0daad, type: 3}
 --- !u!4 &1271590483
 Transform:

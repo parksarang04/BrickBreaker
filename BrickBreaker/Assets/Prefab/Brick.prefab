@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -1541557721671502950}
   m_Layer: 0
   m_Name: Brick
-  m_TagString: Untagged
+  m_TagString: Brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16a4bcc174ffc24fb43bbbdb0eca674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrore: 10
+  score: 10
 --- !u!61 &-1541557721671502950
 BoxCollider2D:
   m_ObjectHideFlags: 0
