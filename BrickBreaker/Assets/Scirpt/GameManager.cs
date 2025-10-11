@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         }
     }
     //공 생성 및 리셋 함수
-    void SpawnBall()
+    public void SpawnBall()
     {
         if(paddleTransform != null && ballPrebab != null)
         {
@@ -114,10 +114,11 @@ public class GameManager : MonoBehaviour
         if (currentBall != null)
         {
             Destroy(currentBall);
+            currentBall = null; //파괴 후 참조를 null로 설정하는것이 안전
         }
 
         //1초후 새 공을 생성
-        Invoke("SpqwnBall", 1f);
+        Invoke("SpawnBall", 1f);
     }
 
     //게임 오버 처리 함수

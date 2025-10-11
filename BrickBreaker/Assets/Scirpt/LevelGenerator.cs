@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -66,27 +67,26 @@ public class LevelGenerator : MonoBehaviour
 
     void GenerateBricks()
     {
-        // Collider가 없으면 에러를 내지 않고 종료 (Start()에서 이미 체크했지만 안전장치)
+        // Collider가 없으면 에러를 내지 않고 종료 (안전장치)
         if (areaCollider == null) return;
 
         // BoxCollider2D의 경계 계산
         Bounds bounds = areaCollider.bounds;
 
         //시작 위치 설정 (BoxCollider의 좌측 상단 모서리)
-        // newStartPosition = 콜라이더의 가장 왼쪽 X 좌표, 가장 위쪽 Y 좌표
         Vector3 finalStartPosition = new Vector3(bounds.min.x, bounds.max.y, 0f);
 
-        // Brick 프리팹의 크기를 기반으로 위치를 보정
-        // 이것은 벽돌의 중심점(Pivot)을 배열의 시작점(Top-Left)에 맞추기 위한 보정.
-        // 이 값을 조정해야 벽돌 배열이 콜라이더 경계선에 딱 맞게 생성
-        // Brick 오브젝트의 Collider2D를 가져와 정확한 크기를 구하는 것
-        // 여기서는 임시 값 0.5f를 사용합니다. (Brick의 높이가 1이라고 가정)
+        // Brick 프리팹의 크기를 기반으로 위치를 보정 (중심점을 맞추기 위함)
         float brickHalfHeight = 0.5f;
         finalStartPosition.y -= brickHalfHeight; // 중심점을 맞추기 위해 Y축을 벽돌 절반 높이만큼 내립니다.
 
-
         // 1. 이중 반복문 사용 : 행과 열을 모두 순회
         int count = 0;
+
+        //현재 레벨에 따른 최대 내구도 계산
+        int maxHP = 1 + (rows / 3);
+        if (maxHP < 1) maxHP = 1;
+
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < cols; j++)
@@ -99,9 +99,22 @@ public class LevelGenerator : MonoBehaviour
 
                 // i에 따라 Y축 위치를 아래로 이동
                 position.y -= i * spacingY;
+                // 누락된 위치 계산 로직 복구
 
                 // 벽돌 생성 (Instantiate)
-                Instantiate(brickPrefab, position, Quaternion.identity);
+                GameObject newBrickObject = Instantiate(brickPrefab, position, Quaternion.identity);
+
+                // 내구도 할당 로직
+                Brick newBrick = newBrickObject.GetComponent<Brick>();
+                if (newBrick != null)
+                {
+                    // 1. 내구도 랜덤 설정 (1부터 maxHP까지)
+                    newBrick.hitPoints = Random.Range(1, maxHP + 1);
+
+                    //newBrick.UpdateColor();
+                }
+                //내구도 할당 로직 끝
+
                 count++;
             }
         }
