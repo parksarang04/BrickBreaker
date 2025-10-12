@@ -15,9 +15,12 @@ public class PaddleController : MonoBehaviour
 
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        Vector2 movement = new Vector2(horizontalInput*speed*Time.deltaTime,0f);
-        rb.MovePosition(rb.position+ movement);
+        float horizontalInput = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+        transform.Translate(horizontalInput, 0, 0);
+
+        //화면 밖으로 나가지 않도록 제한
+        float clampedX = Mathf.Clamp(transform.position.x, -7.5f, 7.5f);
+        transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
 
     }
 }

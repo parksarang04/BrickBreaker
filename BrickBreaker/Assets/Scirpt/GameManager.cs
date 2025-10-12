@@ -9,16 +9,16 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     //게임 상태 변수(Inspector)에서 조절 가능
-    public float currentScore;
-    public int currentlives;
-    public int currentLevel;
+    private bool isGameOver = false;
+    
     public int totalBricks;       //현재 레벨의 전체 벽돌 수
     public float ballSpeed = 8f;  // 
-    public int currentBricks = 1; //레벨 변수
+    public GameObject gameOverText;
+   
 
     //public bool isGameOver;
     //공 리셋을 위한 변수(Inspector)에서 조절 가능
-    public GameObject ballPrebab;
+    public GameObject ballPrefab;
     private Transform paddleTransform;
 
     //활성화된 공 오브젝트
@@ -53,39 +53,21 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
-    }
-
-    // 점수 흭득 함수
-    public void AddScore(int points)
-    {
-        currentScore += points;
-        Debug.Log("Score" + currentScore);
-    }
-
-    //생명 감소 함수
-    public void LoseLife()
-    {
-        currentlives--;
-        Debug.Log("Life" + currentlives);
-
-        if(currentlives > 0)
+        if(isGameOver && Input.GetKeyDown(KeyCode.R))
         {
-            //생명이 남았을 때 공 리셋
-            Invoke("SpawnBall", 1f);  //1초 후에 SpawnBall 함수 실행
-        }
-        else
-        {
-            GameOver();
+            //게임 오버 상태에서 R 키를 누르면 게임 재시작
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
+
     //공 생성 및 리셋 함수
     public void SpawnBall()
     {
-        if(paddleTransform != null && ballPrebab != null)
+        if(paddleTransform != null && ballPrefab != null)
         {
             // 공을 패들 위치에 위치 (offset은 ballControll에서 처리
             Vector3 spawnPosition = paddleTransform.position + new Vector3(0, 0.5f, 0);
-            currentBall = Instantiate(ballPrebab, spawnPosition, Quaternion.identity);
+            currentBall = Instantiate(ballPrefab, spawnPosition, Quaternion.identity);
 
             //공 컨트롤러에 "아직 발사되지 않음" 상태를 알려줌
             BallController ballController = currentBall.GetComponent<BallController>();
@@ -98,33 +80,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LevelUp()
-    {
-        Debug.Log("Level Clear! Moving to next level...");
-
-        currentLevel++;     //레벨 증가
-
-        //공 속도 증가 로직
-        ballSpeed *= 1.1f; //공 속도를 10% 증가
-
-        //다음 레벨의 벽돌을 생성하는 로직 호환
-        LevelGenerator.Instance.GenerateNextLevel(currentLevel);
-    
-        //현재 공이 있다면 파괴하고 새 공을 생성
-        if (currentBall != null)
-        {
-            Destroy(currentBall);
-            currentBall = null; //파괴 후 참조를 null로 설정하는것이 안전
-        }
-
-        //1초후 새 공을 생성
-        Invoke("SpawnBall", 1f);
-    }
 
     //게임 오버 처리 함수
-    void GameOver()
+    public void GameOver()
     {
-        Debug.Log("Game Over! Final Score : " +currentScore);
-        //추가적인 게임 오버 처리 로직 작성 가능
+        isGameOver = true;
+        Debug.Log("Game Over!");
+        if (gameOverText != null)
+        {
+            gameOverText.SetActive(true);
+        }
     }
 }
